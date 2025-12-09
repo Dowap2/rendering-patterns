@@ -23,8 +23,6 @@ export default function Home({ posts }) {
 }
 ```
 
-````
-
 ---
 
 ### 🧠 개념
@@ -64,4 +62,5 @@ export default function Home({ posts }) {
 SSR = **빠른 첫 화면 + SEO 강점** ⟷ **서버 부하·대기 시간·상태 관리 복잡도**를 감수해야 하는 방식.
 
 ```
-````
+
+```
