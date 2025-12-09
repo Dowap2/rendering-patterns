@@ -161,10 +161,3 @@ export default function MyPage() {
 | 데이터가 자주 바뀌는가? | ISR / SSR      | SSG             |
 | 로그인/개인화 기반인가? | CSR            | SSG / ISR / SSR |
 | 실시간인가?             | CSR + Realtime | ISR / SSR       |
-
----
-
-### 📍 결론
-
-셔틀러스 서비스는 **SEO + 사용자 경험 + 최신 데이터 유지**가 모두 중요하므로  
-단일 방식이 아닌 **SSG + ISR + SSR + CSR을 혼합한 하이브리드 렌더링 전략**이 최적입니다.
