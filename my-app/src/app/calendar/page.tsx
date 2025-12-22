@@ -1,5 +1,7 @@
-import DiaryCalendar from "@/components/DiaryCalendar";
+"use client";
+
+import DiaryFullCalendar from "@/components/DiaryFullCalendar";
 
 export default function CalendarPage() {
-  return <DiaryCalendar />;
+  return <DiaryFullCalendar />;
 }
