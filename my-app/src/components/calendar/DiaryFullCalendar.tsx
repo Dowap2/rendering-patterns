@@ -62,7 +62,6 @@ export default function DiaryFullCalendar() {
 
       <CalendarView
         events={events}
-        // 이제 캘린더 클릭은 "오픈"만 하고 싶다면 아래처럼
         onDateClick={() => openCreate()}
         onSelectRange={() => openCreate()}
       />
