@@ -1,103 +1,80 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { CalendarEvent } from "@/features/calendar/types";
-import { addEvent, getEvents } from "@/features/calendar/storage";
-import type { DateClickArg, DateSelectArg } from "@fullcalendar/interaction";
-
+import { useCalendarEvents } from "@/features/calendar/useCalendarEvents";
+import { ScheduleDialog, ScheduleForm } from "./ScheduleDialog";
+import type { ScheduleDraft } from "./ScheduleDialog/types";
+import { uid, todayYMD, toEventDateTime } from "@/features/calendar/utils";
 import CalendarView from "./CalendarView";
-import ScheduleModal from "./ScheduleModal";
-import { uid } from "./utils";
+
+const emptyDraft = (): ScheduleDraft => ({
+  title: "",
+  content: "",
+  allDay: true,
+  startDate: todayYMD(),
+  startTime: "09:00",
+  endDate: todayYMD(),
+  endTime: "10:00",
+});
 
 export default function DiaryFullCalendar() {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const { events, createEvent } = useCalendarEvents();
   const [open, setOpen] = useState(false);
-  const [draft, setDraft] = useState<Partial<CalendarEvent>>({});
+  const [draft, setDraft] = useState<ScheduleDraft>(emptyDraft());
 
-  useEffect(() => {
-    setEvents(getEvents());
-  }, []);
-
-  const openWithDraft = (next: Partial<CalendarEvent>) => {
-    setDraft(next);
+  const openCreate = () => {
+    setDraft(emptyDraft());
     setOpen(true);
   };
 
-  const onDateClick = (info: DateClickArg) => {
-    openWithDraft({
-      type: "schedule",
-      title: "",
-      start: info.dateStr, // yyyy-mm-dd
-      allDay: true,
-    });
-  };
+  const close = () => setOpen(false);
 
-  const onSelectRange = (info: DateSelectArg) => {
-    openWithDraft({
-      type: "schedule",
-      title: "",
-      start: info.startStr, // ISO
-      end: info.endStr, // ISO
-      allDay: info.allDay,
-    });
-  };
+  const submit = () => {
+    if (!draft.title.trim()) return;
 
-  const saveSchedule = () => {
-    if (!draft.title?.trim() || !draft.start) return;
+    const start = toEventDateTime(
+      draft.startDate,
+      draft.startTime,
+      draft.allDay
+    );
+    const end = toEventDateTime(draft.endDate, draft.endTime, draft.allDay);
 
-    const newEvent: CalendarEvent = {
+    const event: CalendarEvent = {
       id: uid(),
       type: "schedule",
       title: draft.title.trim(),
-      start: draft.start,
-      end: draft.end,
-      allDay: draft.allDay ?? false,
-      content: draft.content ?? "",
+      content: draft.content,
+      allDay: draft.allDay,
+      start,
+      end,
     };
 
-    addEvent(newEvent);
-    setEvents((prev) => [newEvent, ...prev]);
-
-    setOpen(false);
-    setDraft({});
+    createEvent(event);
+    close();
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">캘린더</h1>
-
-        <button
-          className="rounded-md bg-black px-3 py-2 text-white"
-          onClick={() =>
-            openWithDraft({
-              type: "schedule",
-              title: "",
-              start: new Date().toISOString(),
-              allDay: false,
-            })
-          }
-        >
-          일정 추가
-        </button>
-      </div>
+    <div>
+      <button type="button" onClick={openCreate}>
+        일정 추가
+      </button>
 
       <CalendarView
         events={events}
-        onDateClick={onDateClick}
-        onSelectRange={onSelectRange}
+        // 이제 캘린더 클릭은 "오픈"만 하고 싶다면 아래처럼
+        onDateClick={() => openCreate()}
+        onSelectRange={() => openCreate()}
       />
 
-      <ScheduleModal
-        open={open}
-        draft={draft}
-        onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))}
-        onClose={() => {
-          setOpen(false);
-          setDraft({});
-        }}
-        onSave={saveSchedule}
-      />
+      <ScheduleDialog open={open} onOpenChange={setOpen} title="일정 등록">
+        <ScheduleForm
+          draft={draft}
+          onChange={(patch) => setDraft((d) => ({ ...d, ...patch }))}
+          onCancel={close}
+          onSubmit={submit}
+        />
+      </ScheduleDialog>
     </div>
   );
 }

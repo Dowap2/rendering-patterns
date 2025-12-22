@@ -7,4 +7,5 @@ export type CalendarEvent = {
   end?: string;
   type: CalendarEventType;
   content?: string;
+  allDay?: boolean;
 };
