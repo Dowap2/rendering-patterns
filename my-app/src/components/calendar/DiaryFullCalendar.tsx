@@ -20,6 +20,7 @@ const emptyDraft = (): ScheduleDraft => ({
 
 export default function DiaryFullCalendar() {
   const { events, createEvent } = useCalendarEvents();
+  // const diarys =
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<ScheduleDraft>(emptyDraft());
 
@@ -62,6 +63,7 @@ export default function DiaryFullCalendar() {
 
       <CalendarView
         events={events}
+        diarys={diarys}
         onDateClick={() => openCreate()}
         onSelectRange={() => openCreate()}
       />

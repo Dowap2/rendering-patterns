@@ -2,12 +2,10 @@
 
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin, {
-  DateClickArg,
-  DateSelectArg,
-} from "@fullcalendar/interaction";
+import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
+import type { DateSelectArg } from "@fullcalendar/core";
 import type { CalendarEvent } from "@/features/calendar/types";
+import * as s from "./CalendarView.css";
 
 type Props = {
   events: CalendarEvent[];
@@ -20,24 +18,28 @@ export default function CalendarView({
   onDateClick,
   onSelectRange,
 }: Props) {
+  const diaryDateSet = new Set(
+    events.filter((e) => e.type === "diary").map((e) => e.date)
+  );
+
   return (
     <FullCalendar
-      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+      plugins={[dayGridPlugin, interactionPlugin]}
       initialView="dayGridMonth"
-      headerToolbar={{
-        left: "prev,next today",
-        center: "title",
-        right: "dayGridMonth,timeGridWeek,timeGridDay",
-      }}
-      height="auto"
+      selectable
       events={events}
-      editable={false}
-      selectable={true}
       dateClick={onDateClick}
       select={onSelectRange}
-      eventClassNames={(arg) => {
-        const type = (arg.event.extendedProps as any).type;
-        return type === "diary" ? ["event-diary"] : ["event-schedule"];
+      dayCellContent={(arg) => {
+        const dateStr = arg.date.toISOString().slice(0, 10);
+        const hasDiary = diaryDateSet.has(dateStr);
+
+        return (
+          <div className={s.dayCell}>
+            <span>{arg.dayNumberText}</span>
+            {hasDiary && <span className={s.diaryDot} />}
+          </div>
+        );
       }}
     />
   );

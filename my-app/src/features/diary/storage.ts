@@ -19,6 +19,7 @@ export function getAllEntries(): DiaryEntry[] {
 
 export function getEntryByDate(date: string): DiaryEntry | null {
   const all = getAllEntries();
+  console.log(all.find((e) => e.date === date));
   return all.find((e) => e.date === date) ?? null;
 }
 
