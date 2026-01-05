@@ -9,3 +9,10 @@ export type CalendarEvent = {
   content?: string;
   allDay?: boolean;
 };
+
+export type DiaryEvent = {
+  id: string;
+  title: string;
+  type: CalendarEventType;
+  date: string;
+};

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { CalendarEvent } from "@/features/calendar/types";
+import type { CalendarEvent, DiaryEvent } from "@/features/calendar/types";
 import { useCalendarEvents } from "@/features/calendar/useCalendarEvents";
 import { ScheduleDialog, ScheduleForm } from "./ScheduleDialog";
 import type { ScheduleDraft } from "./ScheduleDialog/types";
@@ -20,7 +20,10 @@ const emptyDraft = (): ScheduleDraft => ({
 
 export default function DiaryFullCalendar() {
   const { events, createEvent } = useCalendarEvents();
-  // const diarys =
+  const diarys: DiaryEvent[] = [
+    { id: "1", type: "diary", date: "2026-01-05", title: "일기" },
+    { id: "2", type: "diary", date: "2026-01-03", title: "일정" },
+  ];
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<ScheduleDraft>(emptyDraft());
 
